@@ -197,6 +197,7 @@ body {
 .bet-status {
   min-height: 20px;
   font-weight: 500;
+}
 
 /* Responsive design */
 @media (max-width: 768px) {
