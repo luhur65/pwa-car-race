@@ -24,11 +24,11 @@ export class Player {
   }
 
   getCarImagePath() {
-    return `./img/car/${this.id === 'player' ? 'kamu' : this.id}.png`;
+    return `./img/car/${this.id === 'player' ? 'ando' : this.id}.png`;
   }
 
   getInfoImagePath() {
-    return `./img/info/${this.id === 'player' ? 'kamu' : this.id}_info.png`;
+    return `./img/info/${this.id === 'player' ? 'ando' : this.id}_info.png`;
   }
 
   getBadgeClass() {

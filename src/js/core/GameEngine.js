@@ -20,7 +20,7 @@ export class GameEngine extends EventEmitter {
 
   setupPlayers() {
     const playerConfigs = [
-      { id: 'player', name: 'Kamu', color: 'bg-green-500', isHuman: true },
+      { id: 'player', name: 'Ando', color: 'bg-green-500', isHuman: true },
       { id: 'alex', name: 'Alex', color: 'bg-red-500', isHuman: false },
       { id: 'dono', name: 'Dono', color: 'bg-blue-500', isHuman: false },
       { id: 'tejo', name: 'Tejo', color: 'bg-yellow-500', isHuman: false },
@@ -75,7 +75,7 @@ export class GameEngine extends EventEmitter {
   }
 
   handlePlayerFinish(player) {
-    if (!this.raceResults.find(result => result.id === player.id)) {
+    if (!this.raceResults.find(result => result.id === player.id) && this.isRacing) {
       const position = this.raceResults.length + 1;
       player.position = position;
       player.finishTime = Date.now();
@@ -83,10 +83,28 @@ export class GameEngine extends EventEmitter {
 
       this.emit('playerFinished', { player, position });
 
-      if (this.raceResults.length === this.players.length) {
+      // Stop race immediately when first player finishes
+      if (position === 1) {
+        this.stopAllOtherPlayers();
         this.endRace();
       }
     }
+  }
+
+  stopAllOtherPlayers() {
+    // Clear all intervals to stop other players
+    this.raceIntervals.forEach(interval => clearInterval(interval));
+    this.raceIntervals.clear();
+    
+    // Add remaining players to results with their current progress
+    this.players.forEach(player => {
+      if (!this.raceResults.find(result => result.id === player.id)) {
+        const position = this.raceResults.length + 1;
+        player.position = position;
+        player.finishTime = Date.now();
+        this.raceResults.push(player);
+      }
+    });
   }
 
   endRace() {
