@@ -12,6 +12,7 @@ export class GameEngine extends EventEmitter {
     this.raceIntervals = new Map();
     this.raceResults = [];
     this.challengerOpponent = null;
+    this.playerBet = null;
   }
 
   init() {
@@ -186,6 +187,9 @@ export class GameEngine extends EventEmitter {
     // Reset all players
     this.players.forEach(player => player.reset());
     
+    // Reset bet for next race
+    this.playerBet = null;
+    
     this.emit('raceReset');
     console.log('🔄 Race reset');
   }
@@ -204,5 +208,21 @@ export class GameEngine extends EventEmitter {
 
   getRaceResults() {
     return this.raceResults;
+  }
+
+  setBet(playerId) {
+    if (this.isRacing) return false;
+    this.playerBet = playerId;
+    this.emit('betPlaced', { playerId });
+    return true;
+  }
+
+  getPlayerBet() {
+    return this.playerBet;
+  }
+
+  checkBetResult(winner) {
+    if (!this.playerBet) return null;
+    return this.playerBet === winner.id;
   }
 }

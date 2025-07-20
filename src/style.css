@@ -2,8 +2,8 @@
 
 /* Custom styles for the car race game */
 :root {
-  --race-track-height: 60px;
-  --car-size: 40px;
+  --race-track-height: 50px;
+  --car-size: 32px;
 }
 
 * {
@@ -76,13 +76,19 @@ body {
 .player-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 14px;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  max-width: fit-content;
+}
+
+.player-badge img {
+  width: 16px;
+  height: 16px;
 }
 
 /* Game controls */
@@ -162,11 +168,41 @@ body {
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
+/* Betting section */
+.bet-section {
+  display: block;
+}
+
+.bet-select {
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.bet-select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.bet-select option {
+  background: #1f2937;
+  color: white;
+}
+
+.bet-status {
+  min-height: 20px;
+  font-weight: 500;
+
 /* Responsive design */
 @media (max-width: 768px) {
   :root {
-    --race-track-height: 50px;
-    --car-size: 32px;
+    --race-track-height: 45px;
+    --car-size: 28px;
   }
   
   .game-controls {
@@ -176,6 +212,21 @@ body {
   
   .btn {
     width: 200px;
+  }
+  
+  .player-badge {
+    font-size: 11px;
+    padding: 2px 6px;
+    gap: 4px;
+  }
+  
+  .player-badge img {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .car-container {
+    margin-bottom: 8px;
   }
 }
 

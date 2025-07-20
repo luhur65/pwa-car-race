@@ -1,4 +1,5 @@
 import { NotificationManager } from './NotificationManager.js';
+import confetti from 'canvas-confetti';
 
 export class UIManager {
   constructor() {
@@ -28,7 +29,10 @@ export class UIManager {
       modeIndicator: document.querySelector('#mode-indicator'),
       raceContainer: document.querySelector('#race-container'),
       scoreBoard: document.querySelector('#score-board'),
-      scoreList: document.querySelector('#score-list')
+      scoreList: document.querySelector('#score-list'),
+      betSection: document.querySelector('#bet-section'),
+      betSelect: document.querySelector('#bet-select'),
+      betStatus: document.querySelector('#bet-status')
     };
   }
 
@@ -46,6 +50,7 @@ export class UIManager {
     this.elements.resetButton?.addEventListener('click', () => this.resetRace());
     this.elements.modeToggle?.addEventListener('click', () => this.toggleGameMode());
     this.elements.gasButton?.addEventListener('click', () => this.acceleratePlayer());
+    this.elements.betSelect?.addEventListener('change', (e) => this.placeBet(e.target.value));
   }
 
   toggleGameMode() {
@@ -62,6 +67,8 @@ export class UIManager {
     this.updateModeIndicator(mode);
     this.renderRaceTrack();
     this.updateGasButtonVisibility(mode);
+    this.updateBetSectionVisibility(mode);
+    this.populateBetOptions();
   }
 
   updateModeIndicator(mode) {
@@ -83,6 +90,44 @@ export class UIManager {
     }
   }
 
+  updateBetSectionVisibility(mode) {
+    if (this.elements.betSection) {
+      this.elements.betSection.style.display = mode === 'classic' ? 'block' : 'none';
+    }
+  }
+
+  populateBetOptions() {
+    if (!this.elements.betSelect) return;
+    
+    const players = this.gameEngine.getPlayers();
+    const options = ['<option value="">Choose your bet...</option>'];
+    
+    players.forEach(player => {
+      options.push(`<option value="${player.id}">${player.name}</option>`);
+    });
+    
+    this.elements.betSelect.innerHTML = options.join('');
+  }
+
+  placeBet(playerId) {
+    if (!playerId) {
+      this.updateBetStatus('');
+      return;
+    }
+    
+    const success = this.gameEngine.setBet(playerId);
+    if (success) {
+      const player = this.gameEngine.getPlayers().find(p => p.id === playerId);
+      this.updateBetStatus(`🎯 You bet on: ${player.name}`);
+    }
+  }
+
+  updateBetStatus(message) {
+    if (this.elements.betStatus) {
+      this.elements.betStatus.textContent = message;
+    }
+  }
+
   renderRaceTrack() {
     const players = this.gameEngine.getPlayers();
     const raceHTML = players.map(player => this.createPlayerTrackHTML(player)).join('');
@@ -95,7 +140,7 @@ export class UIManager {
   createPlayerTrackHTML(player) {
     return `
       <div class="mb-4">
-        <div class="player-badge ${player.getBadgeClass()}" title="${player.name}">
+        <div class="player-badge ${player.getBadgeClass()}">
           <img src="${player.getCarImagePath()}" alt="${player.name}" class="w-5 h-5 rounded">
           <span>${player.name}</span>
         </div>
@@ -116,6 +161,9 @@ export class UIManager {
     this.elements.startButton.innerHTML = '<div class="loading"></div> Racing...';
     this.elements.resetButton.style.display = 'none';
     this.elements.modeToggle.disabled = true;
+    if (this.elements.betSelect) {
+      this.elements.betSelect.disabled = true;
+    }
     this.hideScoreBoard();
   }
 
@@ -145,9 +193,13 @@ export class UIManager {
     this.elements.startButton.innerHTML = 'Start Race';
     this.elements.resetButton.style.display = 'inline-block';
     this.elements.modeToggle.disabled = false;
+    if (this.elements.betSelect) {
+      this.elements.betSelect.disabled = false;
+    }
     
     this.showScoreBoard(results);
     this.showWinnerNotification(winner);
+    this.checkBetResult(winner);
   }
 
   onRaceReset() {
@@ -155,6 +207,11 @@ export class UIManager {
     this.elements.startButton.innerHTML = 'Start Race';
     this.elements.resetButton.style.display = 'none';
     this.elements.modeToggle.disabled = false;
+    if (this.elements.betSelect) {
+      this.elements.betSelect.disabled = false;
+      this.elements.betSelect.value = '';
+    }
+    this.updateBetStatus('');
     
     this.hideScoreBoard();
     this.resetCarPositions();
@@ -225,6 +282,60 @@ export class UIManager {
       type: isPlayerWinner ? 'success' : 'info',
       duration: 5000
     });
+  }
+
+  checkBetResult(winner) {
+    const gameMode = this.gameEngine.getGameMode();
+    if (gameMode !== 'classic') return;
+    
+    const betResult = this.gameEngine.checkBetResult(winner);
+    if (betResult === true) {
+      this.showConfetti();
+      this.notificationManager.show({
+        title: '🎉 Bet Won!',
+        message: `Congratulations! You correctly bet on ${winner.name}!`,
+        type: 'success',
+        duration: 5000
+      });
+    } else if (betResult === false) {
+      const playerBet = this.gameEngine.getPlayerBet();
+      const betPlayer = this.gameEngine.getPlayers().find(p => p.id === playerBet);
+      this.notificationManager.show({
+        title: '😔 Bet Lost',
+        message: `You bet on ${betPlayer.name}, but ${winner.name} won the race.`,
+        type: 'warning',
+        duration: 4000
+      });
+    }
+  }
+
+  showConfetti() {
+    // Create multiple confetti bursts
+    const duration = 3000;
+    const end = Date.now() + duration;
+
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'];
+
+    (function frame() {
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: colors
+      });
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: colors
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    }());
   }
 
   startRace() {
