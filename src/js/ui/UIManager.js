@@ -23,6 +23,9 @@ export class UIManager {
       title: document.querySelector('#game-title'),
       startButton: document.querySelector('#start-race'),
       resetButton: document.querySelector('#reset-race'),
+      modeToggle: document.querySelector('#mode-toggle'),
+      gasButton: document.querySelector('#gas-button'),
+      modeIndicator: document.querySelector('#mode-indicator'),
       raceContainer: document.querySelector('#race-container'),
       scoreBoard: document.querySelector('#score-board'),
       scoreList: document.querySelector('#score-list')
@@ -36,10 +39,48 @@ export class UIManager {
     this.gameEngine.on('playerFinished', (data) => this.onPlayerFinished(data));
     this.gameEngine.on('raceFinished', (data) => this.onRaceFinished(data));
     this.gameEngine.on('raceReset', () => this.onRaceReset());
+    this.gameEngine.on('gameModeChanged', (data) => this.onGameModeChanged(data));
 
     // UI events
     this.elements.startButton?.addEventListener('click', () => this.startRace());
     this.elements.resetButton?.addEventListener('click', () => this.resetRace());
+    this.elements.modeToggle?.addEventListener('click', () => this.toggleGameMode());
+    this.elements.gasButton?.addEventListener('click', () => this.acceleratePlayer());
+  }
+
+  toggleGameMode() {
+    const currentMode = this.gameEngine.getGameMode();
+    const newMode = currentMode === 'classic' ? 'challenger' : 'classic';
+    this.gameEngine.setGameMode(newMode);
+  }
+
+  acceleratePlayer() {
+    this.gameEngine.acceleratePlayer();
+  }
+
+  onGameModeChanged({ mode, players }) {
+    this.updateModeIndicator(mode);
+    this.renderRaceTrack();
+    this.updateGasButtonVisibility(mode);
+  }
+
+  updateModeIndicator(mode) {
+    if (this.elements.modeIndicator) {
+      const modeText = mode === 'classic' ? 'Classic Race' : 'Challenger Mode';
+      const modeIcon = mode === 'classic' ? '🏁' : '⚡';
+      this.elements.modeIndicator.innerHTML = `${modeIcon} ${modeText}`;
+    }
+    
+    if (this.elements.modeToggle) {
+      const toggleText = mode === 'classic' ? 'Switch to Challenger' : 'Switch to Classic';
+      this.elements.modeToggle.textContent = toggleText;
+    }
+  }
+
+  updateGasButtonVisibility(mode) {
+    if (this.elements.gasButton) {
+      this.elements.gasButton.style.display = mode === 'challenger' ? 'inline-block' : 'none';
+    }
   }
 
   renderRaceTrack() {
@@ -74,6 +115,7 @@ export class UIManager {
     this.elements.startButton.disabled = true;
     this.elements.startButton.innerHTML = '<div class="loading"></div> Racing...';
     this.elements.resetButton.style.display = 'none';
+    this.elements.modeToggle.disabled = true;
     this.hideScoreBoard();
   }
 
@@ -102,6 +144,7 @@ export class UIManager {
     this.elements.startButton.disabled = false;
     this.elements.startButton.innerHTML = 'Start Race';
     this.elements.resetButton.style.display = 'inline-block';
+    this.elements.modeToggle.disabled = false;
     
     this.showScoreBoard(results);
     this.showWinnerNotification(winner);
@@ -111,6 +154,7 @@ export class UIManager {
     this.elements.startButton.disabled = false;
     this.elements.startButton.innerHTML = 'Start Race';
     this.elements.resetButton.style.display = 'none';
+    this.elements.modeToggle.disabled = false;
     
     this.hideScoreBoard();
     this.resetCarPositions();
@@ -162,12 +206,21 @@ export class UIManager {
 
   showWinnerNotification(winner) {
     const isPlayerWinner = winner.isHuman;
-    const message = isPlayerWinner 
-      ? `🎉 Congratulations! You won the race!`
-      : `😔 ${winner.name} won the race. Better luck next time!`;
+    const gameMode = this.gameEngine.getGameMode();
+    
+    let message;
+    if (gameMode === 'challenger') {
+      message = isPlayerWinner 
+        ? `🎉 Excellent! You defeated ${this.gameEngine.getChallengerOpponent()}!`
+        : `😔 ${winner.name} won the challenge. Try clicking faster next time!`;
+    } else {
+      message = isPlayerWinner 
+        ? `🎉 Congratulations! Ando won the race!`
+        : `😔 ${winner.name} won the race. Better luck next time!`;
+    }
     
     this.notificationManager.show({
-      title: isPlayerWinner ? 'Victory!' : 'Race Finished',
+      title: isPlayerWinner ? 'Victory!' : (gameMode === 'challenger' ? 'Challenge Failed' : 'Race Finished'),
       message,
       type: isPlayerWinner ? 'success' : 'info',
       duration: 5000

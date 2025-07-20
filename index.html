@@ -41,7 +41,17 @@
       <p class="text-white/80 text-lg">
         Modern racing game built with cutting-edge web technologies
       </p>
+      <div id="mode-indicator" class="mt-4 inline-block bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white font-semibold">
+        🏁 Classic Race
+      </div>
     </header>
+
+    <!-- Game Mode Toggle -->
+    <div class="text-center mb-6">
+      <button id="mode-toggle" class="btn btn-secondary">
+        Switch to Challenger
+      </button>
+    </div>
 
     <!-- Score Board (Hidden by default) -->
     <div id="score-board" class="score-board hidden mb-8">
@@ -64,6 +74,9 @@
     <div class="game-controls">
       <button id="start-race" class="btn btn-primary">
         🏁 Start Race
+      </button>
+      <button id="gas-button" class="btn btn-warning" style="display: none;">
+        ⚡ GAS!
       </button>
       <button id="reset-race" class="btn btn-secondary" style="display: none;">
         🔄 Race Again

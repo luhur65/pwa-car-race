@@ -5,11 +5,13 @@ import { EventEmitter } from '../utils/EventEmitter.js';
 export class GameEngine extends EventEmitter {
   constructor() {
     super();
+    this.gameMode = 'classic'; // 'classic' or 'challenger'
     this.players = [];
     this.raceTrack = null;
     this.isRacing = false;
     this.raceIntervals = new Map();
     this.raceResults = [];
+    this.challengerOpponent = null;
   }
 
   init() {
@@ -30,6 +32,36 @@ export class GameEngine extends EventEmitter {
     this.players = playerConfigs.map(config => new Player(config));
   }
 
+  setupChallengerMode() {
+    // Setup 1vs1 mode: Ando vs random opponent
+    const opponents = ['alex', 'dono', 'tejo', 'jepri'];
+    const randomOpponent = opponents[Math.floor(Math.random() * opponents.length)];
+    
+    const opponentConfig = {
+      'alex': { id: 'alex', name: 'Alex', color: 'bg-red-500', isHuman: false },
+      'dono': { id: 'dono', name: 'Dono', color: 'bg-blue-500', isHuman: false },
+      'tejo': { id: 'tejo', name: 'Tejo', color: 'bg-yellow-500', isHuman: false },
+      'jepri': { id: 'jepri', name: 'Jepri', color: 'bg-purple-500', isHuman: false }
+    };
+
+    this.players = [
+      new Player({ id: 'player', name: 'Ando', color: 'bg-green-500', isHuman: true }),
+      new Player(opponentConfig[randomOpponent])
+    ];
+    
+    this.challengerOpponent = randomOpponent;
+  }
+
+  setGameMode(mode) {
+    this.gameMode = mode;
+    if (mode === 'challenger') {
+      this.setupChallengerMode();
+    } else {
+      this.setupPlayers();
+    }
+    this.emit('gameModeChanged', { mode, players: this.players });
+  }
+
   startRace() {
     if (this.isRacing) return;
 
@@ -40,10 +72,33 @@ export class GameEngine extends EventEmitter {
     // Reset all players
     this.players.forEach(player => {
       player.reset();
-      this.startPlayerRace(player);
+      if (this.gameMode === 'challenger' && player.isHuman) {
+        // Human player in challenger mode - controlled manually
+        // Don't start automatic movement
+      } else {
+        this.startPlayerRace(player);
+      }
     });
 
-    console.log('🏁 Race started!');
+    console.log(`🏁 ${this.gameMode} race started!`);
+  }
+
+  // Method for challenger mode - user clicks gas button
+  acceleratePlayer() {
+    if (this.gameMode !== 'challenger' || !this.isRacing) return;
+    
+    const player = this.players.find(p => p.isHuman);
+    if (!player || player.isFinished()) return;
+
+    // Increase progress by small amount each click
+    const acceleration = Math.random() * 3 + 1; // 1-4% per click
+    player.updateProgress(Math.min(player.progress + acceleration, 100));
+    
+    this.emit('playerProgress', { player, progress: player.progress });
+
+    if (player.progress >= 100) {
+      this.handlePlayerFinish(player);
+    }
   }
 
   startPlayerRace(player) {
@@ -133,6 +188,14 @@ export class GameEngine extends EventEmitter {
     
     this.emit('raceReset');
     console.log('🔄 Race reset');
+  }
+
+  getGameMode() {
+    return this.gameMode;
+  }
+
+  getChallengerOpponent() {
+    return this.challengerOpponent;
   }
 
   getPlayers() {

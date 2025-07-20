@@ -123,6 +123,19 @@ body {
   color: white;
 }
 
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  animation: pulse 1s infinite;
+}
+
+.btn-warning:hover {
+  animation: none;
+  transform: translateY(-2px) scale(1.05);
+}
+
 /* Score board */
 .score-board {
   background: rgba(255, 255, 255, 0.95);
