@@ -1,7 +1,15 @@
-@@ .. @@
-   "scripts": {
--    "test": "echo \"Error: no test specified\" && exit 1"
-+    "dev": "vite",
-+    "build": "vite build",
-+    "preview": "vite preview"
-   },
+{
+  "name": "car-race-html5",
+  "version": "1.0.0",
+  "description": "Car Race HTML5 adalah sebuah permainan balapan mobil sederhana berbasis web yang dibuat menggunakan HTML5, CSS3, dan JavaScript (VanillaJS). Game ini dirancang untuk dimainkan langsung di browser tanpa perlu instalasi tambahan, serta sudah mendukung Progressive Web App (PWA) sehingga dapat diakses secara offline setelah di-install di perangkat.",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": ["game", "car-race", "html5", "pwa", "javascript"],
+  "author": "",
+  "license": "ISC"
+}
