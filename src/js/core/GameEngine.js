@@ -77,11 +77,9 @@ export class GameEngine extends EventEmitter {
   handlePlayerFinish(player) {
     if (!this.raceResults.find(result => result.id === player.id)) {
       const position = this.raceResults.length + 1;
-      this.raceResults.push({
-        ...player,
-        position,
-        finishTime: Date.now()
-      });
+      player.position = position;
+      player.finishTime = Date.now();
+      this.raceResults.push(player);
 
       this.emit('playerFinished', { player, position });
 
