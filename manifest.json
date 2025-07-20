@@ -1,0 +1,16 @@
+{
+  "name": "Game Car Race",
+  "short_name": "Car Race",
+  "description": "Permainan Game Car Racing Sederhana",
+  "theme_color": "#2996ec",
+  "background_color": "#2196f3",
+  "display": "standalone",
+  "start_url": "./index.html",
+  "icons": [
+    {
+      "src": "./icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
