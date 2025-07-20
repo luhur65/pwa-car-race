@@ -9,7 +9,16 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "keywords": ["game", "car-race", "html5", "pwa", "javascript"],
+  "keywords": [
+    "game",
+    "car-race",
+    "html5",
+    "pwa",
+    "javascript"
+  ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^7.0.5"
+  }
 }
