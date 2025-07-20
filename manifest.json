@@ -1,16 +1,28 @@
 {
-  "name": "Game Car Race",
+  "name": "Modern Car Race Game",
   "short_name": "Car Race",
-  "description": "Permainan Game Car Racing Sederhana",
-  "theme_color": "#2996ec",
-  "background_color": "#2196f3",
+  "description": "Modern car racing game built with Vite, Tailwind CSS 4, and ES6",
+  "theme_color": "#3b82f6",
+  "background_color": "#1e40af",
   "display": "standalone",
   "start_url": "./index.html",
+  "scope": "./",
+  "orientation": "landscape-primary",
+  "categories": ["games", "entertainment"],
   "icons": [
     {
       "src": "./icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ]
 }

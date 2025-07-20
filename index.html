@@ -1,121 +1,102 @@
 <!DOCTYPE html>
 <html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <meta name="description" content="Modern Car Racing Game built with Vite, Tailwind CSS 4, and ES6" />
+  <meta name="keywords" content="game, car, race, car race, html5, vite, tailwind, es6" />
+  <meta name="author" content="@dharma_situmorang" />
+  
+  <title>Car Race HTML5 - Modern Racing Game</title>
+  
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#3b82f6" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Car Race">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="./icon.png">
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="./img/car/kamu.png" as="image">
+  <link rel="preload" href="./img/car/alex.png" as="image">
+  <link rel="preload" href="./img/car/dono.png" as="image">
+  <link rel="preload" href="./img/car/tejo.png" as="image">
+  <link rel="preload" href="./img/car/jepri.png" as="image">
+</head>
 
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="IE=7" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<body class="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800">
+  <!-- Main Container -->
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    
+    <!-- Header -->
+    <header class="text-center mb-8">
+      <h1 id="game-title" class="text-4xl md:text-6xl font-bold text-white animated-title mb-4">
+        Car Racing
+      </h1>
+      <p class="text-white/80 text-lg">
+        Modern racing game built with cutting-edge web technologies
+      </p>
+    </header>
 
-        <meta name="description" content="Car Racing Game HTML5" />
-        <meta name="keywords" content="game, car , race, car race, html5" />
-        <meta name="author" content="@dharma_situmorang" />
-        <title>Car Race HTML5 , CSS3 , VanillaJS - Dharma Situmorang</title>
+    <!-- Score Board (Hidden by default) -->
+    <div id="score-board" class="score-board hidden mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">
+        🏆 Race Results
+      </h2>
+      <div id="score-list" class="space-y-2">
+        <!-- Score items will be inserted here -->
+      </div>
+    </div>
 
-        <!-- Bootstrap core CSS -->
-        <link href="./css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Race Track Container -->
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 shadow-2xl">
+      <div id="race-container" class="space-y-4">
+        <!-- Race tracks will be rendered here -->
+      </div>
+    </div>
 
-        <link rel="stylesheet" href="./css/style.css" />
-        <link rel="manifest" href="./manifest.json">
-        <meta name="theme-color" content="#2996ec" />
+    <!-- Game Controls -->
+    <div class="game-controls">
+      <button id="start-race" class="btn btn-primary">
+        🏁 Start Race
+      </button>
+      <button id="reset-race" class="btn btn-secondary" style="display: none;">
+        🔄 Race Again
+      </button>
+    </div>
 
-    </head>
+    <!-- Footer -->
+    <footer class="text-center mt-12 text-white/60">
+      <p class="text-sm">
+        Built with ❤️ using Vite, Tailwind CSS 4, and Modern JavaScript
+      </p>
+      <p class="text-xs mt-2">
+        Created by <strong>@dharma_situmorang</strong>
+      </p>
+    </footer>
+  </div>
 
-    <body class="bg-dark">
-
-        <!-- container -->
-        <div class="container border-0 p-3 shadow">
-            <h1 class="center mt-4 bold text-white card shadow bg-dark p-2 border-white">
-                Car Racing
-            </h1>
-
-            <!-- papan-score -->
-            <div class="papan-final-score d-none">
-                <div class="card bg-dark border-white">
-                    <div class="card-body">
-                        <h4 class="card-title text-white">Final Proggress Score</h4>
-                        <div class="d-md-flex score-list justify-content-between"></div>
-                    </div>
-                </div>
-            </div>
-            <!-- end of papan score -->
-
-            <div class="container">
-                <!-- race -->
-                <div class="race d-flex justify-content-between">
-                    <div class="all-bot">
-                        <span class="badge badge-success" title="Player1 : Kamu">Kamu</span>
-                        <div class="car car3 bold" data-player="Kamu">
-                            <player-name class="mb-0 lead">
-                                <img src="./img/car/kamu.png" alt="Kamu">
-                            </player-name>
-                        </div>
-                        <span class="badge badge-danger" title="Player2 : Alex">Alex</span>
-                        <div class="car car1" data-player="Alex">
-                            <player-name class="mb-0 lead">
-                                <img src="./img/car/alex.png" alt="Alex">
-                            </player-name>
-                        </div>
-                        <span class="badge badge-primary" title="Player3 : Dono">Dono</span>
-                        <div class="car car2" data-player="Dono">
-                            <player-name class="mb-0 lead">
-                                <img src="./img/car/dono.png" alt="Dono">
-                            </player-name>
-                        </div>
-                        <span class="badge badge-warning" title="Player4 : Tejo">Tejo</span>
-                        <div class="car car4" data-player="Tejo">
-                            <player-name class="mb-0 lead">
-                                <img src="./img/car/tejo.png" alt="Tejo">
-                            </player-name>
-                        </div>
-                        <span class="badge badge-light" title="Player5 : Jepri">Jepri</span>
-                        <div class="car car5" data-player="Jepri">
-                            <player-name class="mb-0 lead">
-                                <img src="./img/car/jepri.png" alt="Jepri">
-                            </player-name>
-                        </div>
-                    </div>
-                    <line-finish></line-finish>
-                </div>
-                <!-- end of race -->
-            </div>
-
-            <div class="all-action mx-auto">
-                <button type="button" class="raceButton btn btn-primary">
-                    Mulai
-                </button>
-                <button type="button" class="reply btn btn-danger">
-                    &circlearrowleft; Main Lagi
-                </button>
-            </div>
-
-        </div>
-        <!-- end of container -->
-
-        <!-- Bootstrap core JavaScript -->
-        <script src="./vendor/jquery.min.js"></script>
-        <script src="./vendor/bootstrap.bundle.min.js"></script>
-        <script src="./vendor/sweetalert2.all.min.js"></script>
-
-        <script src="./index.js" type="module"></script>
-        <script>
-            // REGISTER SERVICE WORKER
-            if ("serviceWorker" in navigator) {
-                window.addEventListener("load", function () {
-                    navigator.serviceWorker
-                        .register("./service-worker.js")
-                        .then(function () {
-                            console.log("Pendaftaran ServiceWorker berhasil");
-                        })
-                        .catch(function () {
-                            console.log("Pendaftaran ServiceWorker gagal");
-                        });
-                });
-            } else {
-                console.log("ServiceWorker belum didukung browser ini.");
-            }
-        </script>
-
-    </body>
-
+  <!-- Scripts -->
+  <script type="module" src="/src/main.js"></script>
+  
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(registration => {
+            console.log('✅ ServiceWorker registered successfully');
+          })
+          .catch(error => {
+            console.log('❌ ServiceWorker registration failed:', error);
+          });
+      });
+    }
+  </script>
+</body>
 </html>
